@@ -4,7 +4,6 @@ const { User, Thought } = require('../models');
 module.exports = {
     getUsers(req, res) {
         User.find()
-        .select('__v')
         .then((user) => res.json(user))
         .catch((err) => res.status(500).json(err));
     },
@@ -14,14 +13,14 @@ module.exports = {
         .select('__v')
         .then((user) =>
         !user
-            ? res.status(404).json({ message: 'No user found with that id '})
+            ? res.status(404).json({ message: 'No user found with that id!' })
             : res.json(user)
             ).catch((err) => res.status(500).json(err));
     },
     // Creates a new user
     createUser(req, res) {
         User.create(req.body)
-            .then((user) => res.json(user))
+            .then((userData) => res.json(userData))
             .catch((err) => res.status(500).json(err));
     },
     // Update a user
@@ -32,13 +31,22 @@ module.exports = {
             { runValidators: true },
             { new: true },
         )
+        .then((user) => 
+            !user
+                ? res.status(404).json({ message: 'No user with this ID!' })
+                : res.json(user)
+        )
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
     },
     // Delete user and BONUS remove their thoughts
     deleteUser(req, res) {
         User.findOneAndRemove({ _id: req.params.userId })
         .then((user) => 
         !user
-            ? res.status(404).json({ message: 'No such user exists '})
+            ? res.status(404).json({ message: 'No such user exists!' })
             : Thought.findOneAndUpdate(
                 { users: req.params.userId },
                 { $pull: { users: req.params.userId } },
@@ -47,10 +55,8 @@ module.exports = {
         )
         .then((thought) => 
             !thought
-                ? res.status(404).json({
-                    message: 'User deleted, but no thoughts found',
-                })
-                : res.json({ message: 'User and thoughts successfully deleted '})
+                ? res.status(404).json({ message: 'User deleted, but no thoughts found!' })
+                : res.json({ message: 'User and thoughts successfully deleted!' })
         )
         .catch((err) => {
             console.log(err);
@@ -64,6 +70,7 @@ module.exports = {
         User.findOneAndUpdate(
             {_id: req.params.userId},
             { $addToSet: { friends: req.params.friendId } },
+            { runValidators: true },
             { new: true }
         )
         .then((user) =>
@@ -78,6 +85,7 @@ module.exports = {
         User.findOneAndUpdate(
             { _id: req.params.userId },
             { $pull: { friend: { friendId: req.params.friendId } } },
+            { runValidators: true },
             { new: true }
         )
         .then((user) => 
