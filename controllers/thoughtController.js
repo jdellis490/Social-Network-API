@@ -9,6 +9,7 @@ module.exports = {
     },
     // Get a single thought
     getSingleThought(res, req) {
+        console.log("getSingleThought - req.params = "+req.params)
         Thought.findOne({ _id: req.params.thoughtId })
             .then((thought) => 
                 !thought
