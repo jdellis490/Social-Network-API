@@ -7,4 +7,4 @@ router.use((req, res) => {
     return res.send('Wrong Route! Try Again!');
 });
 
-module.exporst = router;
+module.exports = router;
