@@ -1,3 +1,4 @@
+// Import required models for controller
 const { User, Thought } = require('../models');
 
 // Get all users
