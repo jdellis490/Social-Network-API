@@ -8,8 +8,7 @@ module.exports = {
         .catch((err) => res.status(500).json(err));
     },
     // Get a single thought
-    getSingleThought(res, req) {
-        console.log("getSingleThought - req.params = "+req.params)
+    getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .then((thought) => 
                 !thought
@@ -55,6 +54,7 @@ module.exports = {
     },
     // Delete a thought
     deleteThought(req, res) {
+        console.log(req.params.thoughtId)
         Thought.findOneAndDelete({ _id: req.params.thoughtId })
             .then((thought) => 
                 !thought
