@@ -42,7 +42,6 @@ module.exports = {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
             { $set: req.body} ,
-            { runValidators: true},
             { new: true },
         )
         .then((thought) => 
@@ -67,12 +66,12 @@ module.exports = {
             )
             .then((user) => {
                 !user
-                    ? res.status(404).json({ message: 'Thought created but no user with this id!' })
+                    ? res.status(404).json({ message: 'Thought deleted but no user with this id!' })
                     : res.json({ message: 'Thought deleted!' });
             })
             .catch((err) => res.status(500).json(err));
     },
-    // Adds reaction to a thought
+    // Adds reaction to a thought by finding thought id
     addReaction(req, res) {
         Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
@@ -89,6 +88,7 @@ module.exports = {
     // Remove reaction from a thought
     removeReaction(req, res) {
         Thought.findOneAndUpdate(
+            //Locates reaction id within thought and pulls it
             { _id: req.params.thoughtId },
             { $pull: { reactions: { reactionId: req.params.reactionId } } },
             { new: true },
